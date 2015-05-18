@@ -1,0 +1,44 @@
+***********************README***********************
+
+-->FUNCIONAMIENTO DEL 'Makefile'
+
+Para generar los ejecutables se utiliza el comando 'make. 
+Existen varias opciones para usar el comando 'make':
+
+make all: compila todos los archivos 
+make shell: compila shell.c y sus dependencias
+make clean: borra todos los .o creados y los ejecutables
+
+
+-->FUNCIONALIDADES DE LA PRÁCTICA
+
+Estas són las siguientes funcionalidades implementadas en la practica:
+
+--Ejecutar comandos externos (cómo "ls", o "printenv", por ejemplo).
+--Ejecutar los comandos internos "cd", "source", "jobs" y "export".
+		--"cd" cambia nuestro directorio actual de trabajo.
+		--"source" ejecuta en nuestro minishell las líneas de comandos que hay en un fichero (línea a línea).
+		--"jobs" muestra todos los procesos que se encuentran en background (segundo plano).
+		--"export" permite añadir/modificar las variables de entorno de nuestro sistema.
+
+--Con este minishell también se puede redireccionar la salida de un comando, que la modifica para enviarla a un fichero de texto.
+--Además, también puede añadir procesos en background (mediante '&'), así como eliminarlos cuando hayan terminado. También hay 
+  presente una implementación que gestiona el uso del 'ctrl + c', para que no finalice nuestro minishell (ni ningún proceso en background) 
+  cuando pulsemos 'ctrl + c', pero si acabe con un proceso activo en foreground al pulsar dicha combinación de teclas.
+
+Como vemos, hemos podido completar todas las funcionalidades que se pedían en la práctica. Para ello hemos seguido el siguiente
+esquema:
+
+	1-Recibir/leer línea por teclado (con 'readline()') y separarla en argumentos. De esto se encarga la función 'separarCommands()'.
+	2-Comprobar que la línea recibida tiene almenos un argumento (la línea no está vacia).
+	3-En el caso de que no esté vacía, comprueba si el comando es interno mediante la función 'isInternal()'.
+	4-Si es interno ejecuta el comando interno a través de la función 'execInternal()'.
+	5-Si no es interno, generamos un proceso "hijo" mediante 'fork()' y comprobamos si estamos redireccionando mediante la expresión
+	  "comando" > "fichero". De ser así, redirecciona correctamente la salida de "comando" a "fichero".
+	6-Si no había sido interno, se ejecutan (mediante la función 'execvp()') los argumentos leídos (en el caso de que no haya habido
+	  redireccionamiento).	
+	7-Comprueba si el proceso esta en Background. De ser así, lo añade a la lista de procesos en background. Cuando finaliza, es 
+	  eliminado de dica lista.
+		NOTA: Los puntos anteriores están implementados dentro de una función llamada 'execute_line()'
+	
+Además de todo esto, le hemos añadido colores al minishell (aunque no lo especificara la práctica) para hacerlo un poco más visual.
